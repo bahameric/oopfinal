@@ -1,0 +1,53 @@
+# driver_exp8_1.py
+
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from Scripts.exp8_1 import Ui_MainWindow  # UI dosyasının doğru yolu olmalı
+from PyQt5.QtGui import QColor
+
+class MainApp(QMainWindow):
+    def __init__(self):
+        super(MainApp, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # Başlangıç RGB değerleri
+        self.r = 0
+        self.g = 0
+        self.b = 0
+
+        # Slider bağlantıları
+        self.ui.horizontalSlider_R.valueChanged.connect(self.handle_slider_r)
+        self.ui.horizontalSlider_G.valueChanged.connect(self.handle_slider_g)
+        self.ui.horizontalSlider_B.valueChanged.connect(self.handle_slider_b)
+
+        # Slider maksimumları (0-255 RGB)
+        self.ui.horizontalSlider_R.setMaximum(255)
+        self.ui.horizontalSlider_G.setMaximum(255)
+        self.ui.horizontalSlider_B.setMaximum(255)
+
+        # Başlangıç rengi uygula
+        self.update_frame_color()
+
+    def handle_slider_r(self, value):
+        self.r = value
+        self.update_frame_color()
+
+    def handle_slider_g(self, value):
+        self.g = value
+        self.update_frame_color()
+
+    def handle_slider_b(self, value):
+        self.b = value
+        self.update_frame_color()
+
+    def update_frame_color(self):
+        color = QColor(self.r, self.g, self.b)
+        style = f"background-color: {color.name()};"
+        self.ui.frame.setStyleSheet(style)
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainApp()
+    window.show()
+    sys.exit(app.exec_())
