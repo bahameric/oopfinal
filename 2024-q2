@@ -1,0 +1,123 @@
+import sys
+import random
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QPushButton, QLabel, QTextEdit,
+    QRadioButton, QComboBox, QGridLayout
+)
+
+class NumberOperationsApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Number Operations")
+        self.numbers = []
+
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+
+        # Labellar
+        self.label_numbers = QLabel("Numbers:")
+        self.label_result = QLabel("Result:")
+        self.label_status = QLabel("Status:")
+        self.layout.addWidget(self.label_numbers, 0, 0)
+        self.layout.addWidget(self.label_result, 0, 2)
+        self.layout.addWidget(self.label_status, 5, 0, 1, 3)
+
+        # TextEdit'ler
+        self.textedit_numbers = QTextEdit()
+        self.textedit_result = QTextEdit()
+        self.textedit_numbers.setReadOnly(True)
+        self.textedit_result.setReadOnly(True)
+        self.layout.addWidget(self.textedit_numbers, 1, 0, 4, 2)
+        self.layout.addWidget(self.textedit_result, 1, 2, 4, 1)
+
+        # Generate Numbers butonu
+        self.btn_generate = QPushButton("Generate Numbers")
+        self.layout.addWidget(self.btn_generate, 6, 0, 1, 3)
+        self.btn_generate.clicked.connect(self.generate_numbers)
+
+        # Toggle butonlar (RadioButton)
+        self.toggle_sum = QRadioButton("Sum")
+        self.toggle_avg = QRadioButton("Average")
+        self.toggle_max = QRadioButton("Max")
+        self.toggle_sort = QRadioButton("Sort")
+        self.toggle_buttons = [self.toggle_sum, self.toggle_avg, self.toggle_max, self.toggle_sort]
+
+        for i, toggle in enumerate(self.toggle_buttons):
+            toggle.setEnabled(False)  # başlangıçta kapalı
+            self.layout.addWidget(toggle, 7, i)
+            toggle.toggled.connect(self.operation_selected)
+
+        # ComboBox (Sort için)
+        self.combo_sort = QComboBox()
+        self.combo_sort.addItems(["Ascending", "Descending"])
+        self.combo_sort.setEnabled(False)
+        self.layout.addWidget(self.combo_sort, 8, 0, 1, 4)
+        self.combo_sort.currentIndexChanged.connect(self.sort_order_changed)
+
+    def generate_numbers(self):
+        self.numbers = [random.randint(0, 99) for _ in range(40)]
+        self.textedit_numbers.setText(", ".join(map(str, self.numbers)))
+        self.textedit_result.clear()
+        self.label_status.setText("Numbers are generated")
+
+        # Toggle butonları aktif et
+        for toggle in self.toggle_buttons:
+            toggle.setEnabled(True)
+            toggle.setChecked(False)  # resetle
+
+        # ComboBox kapalı olsun
+        self.combo_sort.setEnabled(False)
+        self.combo_sort.setCurrentIndex(0)
+
+    def operation_selected(self):
+        sender = self.sender()
+        if sender.isChecked():
+            if sender == self.toggle_sum:
+                result = sum(self.numbers)
+                self.textedit_result.setText(str(result))
+                self.label_status.setText("Sum calculated")
+                self.combo_sort.setEnabled(False)
+            elif sender == self.toggle_avg:
+                if self.numbers:
+                    avg = sum(self.numbers) / len(self.numbers)
+                    self.textedit_result.setText(f"{avg:.2f}")
+                else:
+                    self.textedit_result.setText("No numbers")
+                self.label_status.setText("Average calculated")
+                self.combo_sort.setEnabled(False)
+            elif sender == self.toggle_max:
+                if self.numbers:
+                    maximum = max(self.numbers)
+                    self.textedit_result.setText(str(maximum))
+                else:
+                    self.textedit_result.setText("No numbers")
+                self.label_status.setText("Maximum found")
+                self.combo_sort.setEnabled(False)
+            elif sender == self.toggle_sort:
+                self.combo_sort.setEnabled(True)
+                self.perform_sort()
+
+    def sort_order_changed(self):
+        if self.toggle_sort.isChecked():
+            self.perform_sort()
+
+    def perform_sort(self):
+        if not self.numbers:
+            self.textedit_result.setText("No numbers")
+            return
+
+        order = self.combo_sort.currentText()
+        if order == "Ascending":
+            sorted_nums = sorted(self.numbers)
+            self.label_status.setText("Numbers sorted ascending")
+        else:
+            sorted_nums = sorted(self.numbers, reverse=True)
+            self.label_status.setText("Numbers sorted descending")
+
+        self.textedit_result.setText(", ".join(map(str, sorted_nums)))
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = NumberOperationsApp()
+    window.show()
+    sys.exit(app.exec_())
