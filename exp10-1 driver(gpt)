@@ -1,0 +1,57 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 26 18:49:43 2025
+
+@author: Baha
+"""
+
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtGui import QFont, QColor
+from Scripts.exp10_1 import Ui_MainWindow  # UI dosyanın doğru yolu olmalı
+
+
+class MainApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # Buton tıklanınca güncelleme yapılacak
+        self.ui.pushButton.clicked.connect(self.update_text_style)
+
+    def update_text_style(self):
+        # Font boyutu
+        size_text = self.ui.lineEdit.text()
+        try:
+            font_size = int(size_text)
+        except ValueError:
+            font_size = 12  # Geçersizse varsayılan
+
+        # Renk seçimi
+        color_text = self.ui.comboBox.currentText().lower()
+        color_dict = {
+            "red": "red",
+            "green": "green",
+            "blue": "blue",
+            "black": "black"
+        }
+        color = color_dict.get(color_text, "black")
+
+        # Stil ayarları
+        font = QFont()
+        font.setPointSize(font_size)
+        font.setBold(self.ui.checkBox_Bold.isChecked())
+        font.setItalic(self.ui.checkBox_Italic.isChecked())
+        font.setUnderline(self.ui.checkBox_Bold_3.isChecked())
+        font.setStrikeOut(self.ui.checkBox_Bold_4.isChecked())
+
+        # Uygula
+        self.ui.label_3.setFont(font)
+        self.ui.label_3.setStyleSheet(f"color: {color};")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainApp()
+    window.show()
+    sys.exit(app.exec_())
