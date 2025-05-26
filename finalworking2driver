@@ -1,0 +1,65 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 26 19:55:17 2025
+
+@author: Baha
+"""
+
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from Scripts.finalworking2 import Ui_MainWindow  # UI dosyanın doğru yolu olmalı
+
+class MainApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # ComboBox seçenekleri ekle
+        self.ui.comboBox.addItems(["Print the text box", "Write the file"])
+
+        # Buton bağlantısı
+        self.ui.pushButton.clicked.connect(self.run_action)
+
+    def run_action(self):
+        input_text = self.ui.lineEdit.text()
+        try:
+            limit = int(input_text)
+            if limit < 2:
+                raise ValueError
+        except ValueError:
+            self.ui.label_Status.setText("Status: Invalid input! Please enter an integer ≥ 2.")
+            return
+
+        prime_list = self.calculate_primes(limit)
+        choice = self.ui.comboBox.currentText()
+
+        if choice == "Print the text box":
+            self.print_text_box(prime_list)
+            self.ui.label_Status.setText("Status: Printed to text box.")
+        elif choice == "Write the file":
+            self.print_file(prime_list)
+            self.ui.label_Status.setText("Status: Written to file.")
+        else:
+            self.ui.label_Status.setText("Status: Unknown action selected.")
+
+    def calculate_primes(self, n):
+        primes = []
+        for num in range(2, n + 1):
+            if all(num % i != 0 for i in range(2, int(num ** 0.5) + 1)):
+                primes.append(num)
+        return primes
+
+    def print_text_box(self, prime_list):
+        self.ui.textEdit.clear()
+        self.ui.textEdit.append(", ".join(map(str, prime_list)))
+
+    def print_file(self, prime_list):
+        with open("primes_output.txt", "w") as f:
+            f.write(", ".join(map(str, prime_list)))
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainApp()
+    window.show()
+    sys.exit(app.exec_())
