@@ -36,7 +36,6 @@ class NumberOperationsApp(QMainWindow):
     def generate_numbers(self):
         self.numbers = [random.randint(0, 100) for _ in range(40)]
         self.ui.textEdit_numbers.setPlainText(", ".join(map(str, self.numbers)))
-        self.ui.label_numbers.setText("Numbers are generated")
         
         # Toggle butonları ve combo box etkinleştir
         self.ui.radioButton_max.setEnabled(True)
