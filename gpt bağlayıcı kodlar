@@ -1,0 +1,82 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from tasarim_ui import Ui_MainWindow  # Qt Designer'dan gelen arayüz sınıfı
+
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # QPushButton - Tıklanınca fonksiyon çalışsın
+        self.ui.pushButton.clicked.connect(self.buton_tiklandi)
+
+        # QComboBox - Seçim değişince çalışır
+        self.ui.comboBox.currentIndexChanged.connect(self.combobox_degisti)
+
+        # QLineEdit - Metin değiştikçe çalışır
+        self.ui.lineEdit.textChanged.connect(self.lineedit_degisti)
+
+        # QTextEdit - Metin değiştikçe çalışır
+        self.ui.textEdit.textChanged.connect(self.textedit_degisti)
+
+        # QCheckBox - Seçim durumu değişince çalışır
+        self.ui.checkBox.stateChanged.connect(self.checkbox_degisti)
+
+        # QRadioButton - Seçili hale gelince çalışır
+        self.ui.radioButton.toggled.connect(self.radiobutton_secildi)
+
+        # QSlider - Değeri değişince çalışır
+        self.ui.horizontalSlider.valueChanged.connect(self.slider_degisti)
+
+        # QSpinBox - Değeri değişince çalışır
+        self.ui.spinBox.valueChanged.connect(self.spinbox_degisti)
+
+        # QLabel'e manuel metin ayarlama örneği (butona basınca yapacağız)
+        # self.ui.label.setText("Merhaba Dünya")
+
+    # SLOT FONKSIYONLARI
+
+    def buton_tiklandi(self):
+        print("Butona tıklandı!")
+        self.ui.label.setText("Buton tıklandı!")  # QLabel'e yazı yaz
+
+    def combobox_degisti(self, index):
+        secilen = self.ui.comboBox.currentText()
+        print(f"ComboBox seçildi: {secilen}")
+        self.ui.label.setText(f"Seçilen: {secilen}")
+
+    def lineedit_degisti(self, yeni_metin):
+        print(f"LineEdit: {yeni_metin}")
+        self.ui.label.setText(yeni_metin)
+
+    def textedit_degisti(self):
+        metin = self.ui.textEdit.toPlainText()
+        print(f"TextEdit içeriği: {metin}")
+        self.ui.label.setText(f"Yazdın: {metin[:10]}...")  # ilk 10 karakter
+
+    def checkbox_degisti(self, durum):
+        print(f"CheckBox durumu: {durum}")
+        if durum == 2:
+            self.ui.label.setText("CheckBox işaretli")
+        else:
+            self.ui.label.setText("CheckBox işaretli değil")
+
+    def radiobutton_secildi(self, secildi):
+        if secildi:
+            print("RadioButton seçildi")
+            self.ui.label.setText("Radio seçildi")
+
+    def slider_degisti(self, deger):
+        print(f"Slider: {deger}")
+        self.ui.label.setText(f"Slider: {deger}")
+
+    def spinbox_degisti(self, deger):
+        print(f"SpinBox: {deger}")
+        self.ui.label.setText(f"Spin: {deger}")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())
