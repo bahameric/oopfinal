@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+
+# tasarim.ui -> pyuic5 ile çevrilmiş kod
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(400, 300)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.pushButton = QtWidgets.QPushButton("Tıkla", self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(150, 50, 100, 30))
+        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBox.setGeometry(QtCore.QRect(150, 100, 100, 30))
+        self.comboBox.addItems(["Bir", "İki", "Üç"])
+        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit.setGeometry(QtCore.QRect(150, 150, 100, 30))
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(150, 200, 100, 50))
+        self.label = QtWidgets.QLabel("Label", self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(20, 20, 200, 20))
+
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Demo Uygulama"))
+
+# --------------------------------------------------------
+# Aşağıya kendi sinyal-slot bağlantılarını ve işlevlerini yazıyoruz
+# --------------------------------------------------------
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+
+    # ----------- SIGNAL -> SLOT bağlantıları buraya -----------
+    ui.pushButton.clicked.connect(lambda: ui.label.setText("Butona basıldı"))
+    ui.comboBox.currentTextChanged.connect(lambda text: ui.label.setText(f"Seçim: {text}"))
+    ui.lineEdit.textChanged.connect(lambda text: ui.label.setText(f"Girdi: {text}"))
+    ui.textEdit.textChanged.connect(lambda: ui.label.setText(f"TextEdit: {ui.textEdit.toPlainText()[:10]}"))
+
+    MainWindow.show()
+    sys.exit(app.exec_())
